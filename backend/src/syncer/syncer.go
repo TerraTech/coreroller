@@ -76,6 +76,8 @@ func (s *Syncer) Start() {
 L:
 	for {
 		select {
+		case <-time.After(1 * time.Minute):
+			_ = s.checkForUpdates() // first sync shortly after startup
 		case <-checkCh:
 			_ = s.checkForUpdates()
 		case <-s.stopCh:
