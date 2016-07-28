@@ -73,11 +73,15 @@ func (s *Syncer) Start() {
 	logger.Debug("syncer ready!")
 	checkCh := time.Tick(checkFrequency)
 
+	// first sync shortly after startup
+	go func() {
+		<-time.NewTimer(1 * time.Minute).C
+		_ = s.checkForUpdates() 
+	}()
+
 L:
 	for {
 		select {
-		case <-time.After(1 * time.Minute):
-			_ = s.checkForUpdates() // first sync shortly after startup
 		case <-checkCh:
 			_ = s.checkForUpdates()
 		case <-s.stopCh:
