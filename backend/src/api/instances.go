@@ -2,12 +2,10 @@ package api
 
 import (
 	"fmt"
-	"regexp"
 	"time"
 
 	"github.com/satori/go.uuid"
 	"gopkg.in/mgutz/dat.v1"
-	"github.com/mgutz/logxi/v1"
 )
 
 const (
@@ -46,11 +44,6 @@ const (
 
 const (
 	validityInterval = "1 days"
-)
-
-var (
-	logger = log.New("instances")
-	scrubSemverRE = regexp.MustCompile(`^(\d+\.\d+\.\d+)\+\d+-`)
 )
 
 // Instance represents an instance running one or more applications for which
@@ -127,20 +120,10 @@ func (api *API) RegisterInstance(instanceID, instanceIP, instanceVersion, appID,
 		return nil, err
 	}
 
-	// Temporary workaround for: https://github.com/coreroller/coreroller/issues/18
-	scrub_semver := func (semver string) string {
-		if matches := scrubSemverRE.FindStringSubmatch(semver); matches != nil {
-			logger.Debug("Scrubbing instanceVersion", "old", semver, "new", matches[1])
-			return matches[1]
-		}
-
-		return semver
-	}
-
 	result, err = tx.
 		Upsert("instance_application").
 		Columns("instance_id", "application_id", "group_id", "version", "last_check_for_updates").
-		Values(instanceID, appID, groupID, scrub_semver(instanceVersion), nowUTC).
+		Values(instanceID, appID, groupID, instanceVersion, nowUTC).
 		Where("instance_id = $1 AND application_id = $2", instanceID, appID).
 		Exec()
 
