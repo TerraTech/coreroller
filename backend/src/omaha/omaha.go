@@ -21,7 +21,6 @@ var (
 		"alpha":  "5b810680-e36a-4879-b98a-4f989e80b899",
 		"beta":   "3fe10490-dd73-4b49-b72a-28ac19acfcdc",
 		"stable": "9a2deb70-37be-4026-853f-bfdd6b347bbe",
-		"devel":  "2d852d00-fd5e-45cc-b784-412f6e5c593a",
 	}
 
 	// ErrMalformedRequest error indicates that the omaha request it has
