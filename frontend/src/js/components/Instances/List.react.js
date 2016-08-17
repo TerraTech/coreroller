@@ -2,13 +2,15 @@ import React, { PropTypes } from "react"
 import Item from "./Item.react"
 import _ from "underscore"
 import semver from "semver"
+import { cleanSemverVersion } from "../../constants/helpers"
 
 class List extends React.Component {
 
   constructor(props) {
     super(props)
-    this.state = {selections: {}}
     this.onItemToggle = this.onItemToggle.bind(this)
+
+    this.state = {selections: {}}
   }
 
   static PropTypes: {
@@ -22,7 +24,7 @@ class List extends React.Component {
     if (selected == true) {
       _.mapObject(selections, (val, key) => {
         if (val == true) {
-          selections[key] = false;
+          selections[key] = false
         }
       })
       // Save opened instance
@@ -40,8 +42,10 @@ class List extends React.Component {
 
   render() {
     let versions = this.props.version_breakdown ? this.props.version_breakdown : [],
-        lastVersionChannel = this.props.channel.package ? this.props.channel.package.version : "",
-        versionNumbers = (_.map(versions, function(version) {return version.version})).sort(semver.rcompare)
+        lastVersionChannel = this.props.channel.package ? cleanSemverVersion(this.props.channel.package.version) : "",
+        versionNumbers = (_.map(versions, (version) => {
+          return cleanSemverVersion(version.version)
+        })).sort(semver.rcompare)
 
     return(
       <div className="coreRollerTable">
@@ -53,7 +57,7 @@ class List extends React.Component {
           <div className="coreRollerTable-cell">Last check</div>
         </div>
         {this.props.instances.map((instance, i) =>
-          <Item key={i} instance={instance} lastVersionChannel={lastVersionChannel} versionNumbers={versionNumbers} selected={this.state.selections[instance.id]} onToggle={this.onItemToggle} />
+          <Item key={"instance_" + i} instance={instance} lastVersionChannel={lastVersionChannel} versionNumbers={versionNumbers} selected={this.state.selections[instance.id]} onToggle={this.onItemToggle} />
         )}
       </div>
     )
